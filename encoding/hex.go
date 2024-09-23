@@ -84,12 +84,15 @@ func (e asciiToHexEncoder) Decode(data []byte, length int) ([]byte, int, error) 
 		return nil, 0, fmt.Errorf("length should be positive, got %d", length)
 	}
 
-	if length > len(data) {
+	// decodedLen := length
+	decodedLen := hex.DecodedLen(length)
+
+	if decodedLen > len(data) {
 		return nil, 0, errors.New("not enough data to read")
 	}
 
-	out := make([]byte, hex.EncodedLen(length))
-	hex.Encode(out, data[:length])
+	out := make([]byte, length)
+	hex.Encode(out, data[:decodedLen])
 
-	return []byte(strings.ToUpper(string(out))), length, nil
+	return []byte(strings.ToUpper(string(out))), decodedLen, nil
 }
